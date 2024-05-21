@@ -66,6 +66,11 @@ function M.watch(path, opts, callback)
   opts = opts or {}
 
   path = vim.fs.normalize(path)
+  local _, _, staterrname = uv.fs_stat(path)
+  if staterrname == 'ENOENT' then
+    return function() end
+  end
+
   local uvflags = opts and opts.uvflags or {}
   local handle = assert(uv.new_fs_event())
 
